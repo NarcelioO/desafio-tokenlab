@@ -1,0 +1,45 @@
+GET http://localhost:3000/api/events/
+
+###
+POST http://localhost:3000/api/events
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NzczYjJkOGJmMGQ2MjM0ZDUwY2JiMiIsImlhdCI6MTczNTg2NzE4MSwiZXhwIjoxNzM1OTUxNzgxfQ.W8KTl9QmnkmsWwFdxVSVEfNj7dLmgBlxuzUtgTUxjf0
+
+{
+    "title":"Call",
+    "start":"2024-12-02T13:00:00",
+    "end":"2024-12-05T13:00:00"
+}
+
+###
+PUT http://localhost:3000/api/events/6772d8126aa8e16788474a4a
+Content-Type: application/json
+
+{
+    "title":"evento atualizado",
+    "description":"qweqweqwe"
+}
+###
+DELETE  http://localhost:3000/api/events/67737537d251ff0c658c37c4
+Content-Type: application/json
+
+
+###
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+{
+    "name":"Eu",
+    "email":"232323eqe@email.com",
+    "password":"123"
+}
+
+###
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NzczNmFiNGJmOGZiZTlmNmJkYmU5MCIsImlhdCI6MTczNTg2NjAyNywiZXhwIjoxNzM1OTUwNjI3fQ.hMFfq-o3W34rvEJdb54tWq3YzqsyGPwoC8U9t3OtIEU
+
+{
+    "email":"232323eqe@email.com",
+    "password":"123"
+}
