@@ -64,9 +64,6 @@ const eventController = {
                 return res.status(404).send({ error: 'Evento não encontrado' });
             }
 
-            if(event.userId != userId){
-                return res.status(401).send({error:'Você não tem permissão para deletar este evento'});
-            }
 
             res.status(200).send({ message:"Evento deletado com sucesso" });
 

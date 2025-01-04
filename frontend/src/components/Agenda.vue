@@ -1,37 +1,13 @@
 <template>
     <div class="w-full h-full">
-        <div v-if="showForm" class="modal">
-            <div class="modal-content">
-                <form @submit.prevent="submitForm">
-
-                <div class="mt-2">
-                    <label for="title" class="block mb-2 text-sm font-medium text-black-900">Título:</label>
-                    <input type="text" id="title" v-model="formData.title" class="block w-full p-2 text-gray-500 border border-gray-300 rounded-lg bg-gray-50 text-sm" required>
-                </div>
-                <div class="mt-2">
-                    <label for="title" class="block mb-2 text-sm font-medium text-black-900">Inicio:</label>
-                    <input type="datetime-local" id="title" v-model="formData.start" class="block w-full p-2 text-gray-500 border border-gray-300 rounded-lg bg-gray-50 text-sm" required>
-                </div>
-                <div class="mt-2">
-                    <label for="title" class="block mb-2 text-sm font-medium text-black-900">Fim:</label>
-                    <input type="datetime-local" id="title" v-model="formData.end" class="block w-full p-2 text-gray-500 border border-gray-300 rounded-lg bg-gray-50 text-sm">
-                </div>
-                <div class="flex gap-2 mt-4">
-                    <button type="submit" class="py-2 px-3 rounded text-white font-medium bg-blue-600">{{isEditing ? 'Salvar': 'Criar'}}</button>
-                    <button type="button" class="py-2 px-3 rounded text-white font-medium bg-red-600" v-if="isEditing" @click="deleteEvent">Excluir</button>
-                    <button type="button" class="py-2 px-3 rounded text-white font-medium bg-yellow-500" @click="showForm = false">Cancelar</button>
-                </div>
-                </form>
-            </div>
-        </div>
-        <!-- <EventForm 
+        <EventForm 
             v-if="showForm"
             :eventData="formData"
             :isEditing="isEditing"
             @save="submitForm" 
             @delete="deleteEvent" 
             @cancel="cancelForm"
-        /> -->
+        />
         <button @click="openCreateForm()" class="py-2 px-3 rounded text-white font-medium bg-blue-600">Criar Evento</button>
         <FullCalendarComponent class=""
             :options="calendarOptions"
@@ -48,8 +24,6 @@ import { ref, onMounted, reactive } from 'vue';
 import EventForm from './EventForm.vue';
 
 
-
-const date = ref(new Date())
 const events = ref([])
 const formData = reactive({title:"", start:"", end:""})
 const selectedEvent = ref(null)
@@ -118,10 +92,10 @@ const fetchEvents = async () =>{
         }))
         calendarOptions.value.events = events.value
         
-        
     }catch(err)
     {
         console.error('Erro ao buscar eventos:', err);
+        calendarOptions.value.events = []
     }
 }
 const openCreateForm = () => {
@@ -137,25 +111,42 @@ const cancelForm = () => {
   resetFormData();
 };
 
-const submitForm = async () => {
+const submitForm = async (data) => {
     const token = localStorage.getItem('token')
     if (isEditing.value) {
-        await api.put(`/events/${selectedEvent.value.id}`, formData,{headers:{Authorization:token}});
+        await api.put(`/events/${selectedEvent.value.id}`, data,{headers:{Authorization:token}});
     } else {   
         
-        await api.post("/events", formData, {headers:{Authorization:token}});
+        await api.post("/events", data, {headers:{Authorization:token}});
     }
     await fetchEvents();
     cancelForm();
 };
 
+// const deleteEvent = async () => {
+//   const token = localStorage.getItem('token')
+//   if (selectedEvent.value?.id) {
+//     await api.delete(`/events/${selectedEvent.value.id}`, {headers:{Authorization:token}});
+//     await fetchEvents();
+//     cancelForm();
+//   }
+// };
 const deleteEvent = async () => {
-  const token = localStorage.getItem('token')
-  if (selectedEvent.value?.id) {
-    await api.delete(`/events/${selectedEvent.value.id}`, {headers:{Authorization:token}});
-    await fetchEvents();
-    cancelForm();
-  }
+    console.log(selectedEvent.value.id)
+    console.log(localStorage.getItem('token'))
+    const token = localStorage.getItem('token')
+    try{
+        await api.delete(`events/${selectedEvent.value.id}`, {headers:{Authorization:token}})
+        await fetchEvents()
+        cancelForm()
+    }catch(e){
+        console.log('erro ao deletar evento', e)
+    }
+//   if (selectedEvent.value?.id) {
+//     await api.delete(`/events/${selectedEvent.value.id}`, {headers:{Authorization:token}});
+//     await fetchEvents();
+//     cancelForm();
+//   }
 };
 
 onMounted(()=>{
@@ -165,35 +156,7 @@ onMounted(()=>{
 </script>
 
 <style scoped>
-.event-hovered{
-    cursor: pointer;
-    background-color: #ffcc00;
-    border-color: #ffa500;
-    color: #000;
-}
-header {
-      background: #0078d7;
-      color: #fff;
-      padding: 1em 0;
-      text-align: center;
-  }
-.modal {
-  position: fixed;
-  z-index: 99;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: rgba(0, 0, 0, 0.5);
-}
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 800px;
-}
+
+
 </style>
 
